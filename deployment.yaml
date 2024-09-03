@@ -1,19 +1,27 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: spring-boot-app-deployment
+  labels:
+    app: influxdb
+  name: influxdb
+  namespace: influxdb
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: spring-boot-app
-  replicas: 1
+      app: influxdb
+  serviceName: influxdb
   template:
     metadata:
       labels:
-        app: spring-boot-app
+        app: influxdb
     spec:
       containers:
-      - name: spring-boot-app
-        image: pmgysel/spring-boot-app:0.0.1
+      - image: influxdb:2.0.6
+        name: influxdb
         ports:
-        - containerPort: 8080
+        - containerPort: 8086
+          name: influxdb
+        volumeMounts:
+        - mountPath: /var/lib/influxdb2
+          name: data
